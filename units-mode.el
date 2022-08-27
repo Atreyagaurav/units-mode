@@ -1,11 +1,14 @@
- ;;; units-mode.el --- conversion between different units -*- lexical-binding: t -*-
+;;; units-mode.el --- Mode for conversion between different units -*- lexical-binding: t -*-
+
+;; Copyright (C) 2022
 
 ;; Author: Gaurav Atreya <allmanpride@gmail.com>
 ;; Maintainer:
+;; URL: https://github.com/Atreyagaurav/units-mode
 ;; Version: 0.1
-;; Package-Requires: ((emacs "28.1"))
+;; Package-Requires: ((emacs "24.4"))
 ;; Homepage: https://github.com/Atreyagaurav/units-mode
-;; Keywords: units,conversion,global-mode
+;; Keywords: units,unit-conversion,convenience
 
 
 ;; This file is not part of GNU Emacs
@@ -28,6 +31,9 @@
 
 ;; This is emacs interface to gnu units program <https://www.gnu.org/software/units/units.html>.
 
+;; For detailed help visit github page:
+;; https://github.com/Atreyagaurav/units-mode
+
 ;;; Code:
 (require 'cl-lib)
 
@@ -41,6 +47,7 @@
   "Extra args for user to add to units command.")
 
 (defun units-command (value to-unit)
+  "Run the units command to convert VALUE to TO-UNIT and return the output."
   (shell-command-to-string
    (format "%s %s %s \"%s\" \"%s\""
 	   units-binary-path
@@ -50,6 +57,7 @@
 
 
 (defun units-command-conformable (value)
+  "Run the units command to get VALUE's conformable units."
   (shell-command-to-string
    (format "%s %s --conformable \"%s\""
 	   units-binary-path
@@ -57,18 +65,21 @@
 	   value)))
 
 (defun units-convert (value to-unit)
+  "Convert VALUE to TO-UNIT unit."
   (let ((out-lines (split-string
 		    (string-trim-right
 		     (units-command value to-unit)) "\n")))
-    (if (length= out-lines 1)
+    (if (= (length out-lines) 1)
 	(car out-lines)
       (user-error "%s" (string-join out-lines "\n")))))
 
 (defun units-convert-single (value from-unit to-unit)
+  "Convert a single VALUE from FROM-UNIT to TO-UNIT."
   (units-convert (format "%s %s" value from-unit) to-unit))
 
 
 (defun units-convert-formatted (value to-unit)
+  "Convert VALUE to TO-UNIT and format the output."
   (let ((converted (units-convert value to-unit)))
     (if (cl-search ";" to-unit)
 	(let ((values (split-string converted ";"))
@@ -80,17 +91,15 @@
 		    collect (format "%s %s" val unt)) " + "))
       (format "%s %s" converted to-unit))))
 
-(setq values (split-string "1;0;1" ";"))
-(setq units (split-string "m;cm;mm" ";"))
-
-
 
 (defun units-conformable-list (value)
+  "Conformable units list related to VALUE."
   (split-string
    (string-trim
     (units-command-conformable value)) "\n"))
 
 (defun units-convert-region (region-text to-unit)
+  "Convert the marked REGION-TEXT to TO-UNIT."
   (interactive
    (let ((region-text
 	  (buffer-substring-no-properties
@@ -102,6 +111,7 @@
   (message "%s" (units-convert-formatted region-text to-unit)))
 
 (defun units-convert-region-and-insert (region-text to-unit)
+  "Convert REGION-TEXT to TO-UNIT and insert the results."
   (interactive
    (let ((region-text
 	  (buffer-substring-no-properties
