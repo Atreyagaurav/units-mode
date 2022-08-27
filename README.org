@@ -1,0 +1,31 @@
+* units-global-mode
+
+This mode uses [[https://www.gnu.org/software/units/units.html][gnu units]] to facilitate unit conversions inside emacs.
+
+*This package is a work in progress*
+
+* Features
+- [X] convert region to other units
+- [ ] check ~--conformable~ units
+
+
+* Example
+
+If you have
+
+    L = 23 ft
+
+And you ran ~units-convert-region-and-insert~ while selecting ~23 ft~ you'll be asked for target unit and with ~mm~ you get:
+
+    L = 23 ft = 7010.4 mm
+
+Similarly,
+
+    g = 9.81 m/s^2
+    g = 9.81 m/s^2 = 32.185039 ft/s^2
+
+There is completion for the target unit, that is non-exhaustive as it only includes defined units and not derived ones like ~ft/s^2~
+
+Running ~units-convert-region~ will just show the converted results in the minibuffer.
+
+If there is errors, like units aren't matched then it'll end with the error from ~units~
