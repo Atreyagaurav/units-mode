@@ -29,6 +29,7 @@
 ;; This is emacs interface to gnu units program <https://www.gnu.org/software/units/units.html>.
 
 ;;; Code:
+(require 'cl-lib)
 
 (defcustom units-binary-path "units"
   "Path to the units binary.")
@@ -56,13 +57,32 @@
 	   value)))
 
 (defun units-convert (value to-unit)
-  (let ((out-lines (split-string (string-trim-right (units-command value to-unit)) "\n")))
+  (let ((out-lines (split-string
+		    (string-trim-right
+		     (units-command value to-unit)) "\n")))
     (if (length= out-lines 1)
-	(string-to-number (car out-lines))
+	(car out-lines)
       (user-error "%s" (string-join out-lines "\n")))))
 
 (defun units-convert-single (value from-unit to-unit)
   (units-convert (format "%s %s" value from-unit) to-unit))
+
+
+(defun units-convert-formatted (value to-unit)
+  (let ((converted (units-convert value to-unit)))
+    (if (cl-search ";" to-unit)
+	(let ((values (split-string converted ";"))
+	      (units (split-string to-unit ";")))
+	  (string-join
+	   (cl-loop for val in values
+		    for unt in units
+		    if (> (string-to-number val) 0)
+		    collect (format "%s %s" val unt)) " + "))
+      (format "%s %s" converted to-unit))))
+
+(setq values (split-string "1;0;1" ";"))
+(setq units (split-string "m;cm;mm" ";"))
+
 
 
 (defun units-conformable-list (value)
@@ -79,7 +99,7 @@
 	    (completing-read
 	     "Convert to: "
 	     (units-conformable-list region-text)))))
-  (message "%s" (units-convert region-text to-unit)))
+  (message "%s" (units-convert-formatted region-text to-unit)))
 
 (defun units-convert-region-and-insert (region-text to-unit)
   (interactive
@@ -90,13 +110,12 @@
 	    (completing-read
 	     "Convert to: "
 	     (units-conformable-list region-text)))))
-  (save-excursion
-    (goto-char (region-end))
-    (insert (concat " = "
-		    (number-to-string
-		     (units-convert region-text to-unit))
-		    " "
-		    to-unit))))
+  (goto-char (region-end))
+  (insert (concat " = "
+		  (units-convert-formatted region-text to-unit))))
+
+(define-minor-mode units-mode
+  "Minor mode for Calculations related to units.")
 
 (provide 'units-mode)
 

@@ -1,16 +1,38 @@
-* units-global-mode
+* units-mode
 
 This mode uses [[https://www.gnu.org/software/units/units.html][gnu units]] to facilitate unit conversions inside emacs.
 
 *This package is a work in progress*
 
+* Contents :TOC:
+- [[#units-mode][units-mode]]
+- [[#features][Features]]
+- [[#installation][Installation]]
+- [[#examples][Examples]]
+  - [[#simple-conversion][Simple conversion]]
+  - [[#derived-units][Derived units]]
+  - [[#multiple-units][Multiple units]]
+
 * Features
 - [X] convert region to other units
-- [ ] check ~--conformable~ units
+- [X] check ~--conformable~ units for completion
+
+* Installation
+First clone this repo into your local machine, then you can load it.
+
+An example config using ~use-package~ is like this:
+
+#+begin_src emacs-lisp
+(use-package units-mode
+  :load-path "/path/to/units-mode"
+  :hook text-mode
+  :config
+  (local-set-key (kbd "C-c u") 'units-convert-region-and-insert))
+#+end_src
 
 
-* Example
-
+* Examples
+** Simple conversion
 If you have
 
     L = 23 ft
@@ -19,13 +41,33 @@ And you ran ~units-convert-region-and-insert~ while selecting ~23 ft~ you'll be 
 
     L = 23 ft = 7010.4 mm
 
+    There is completion for the target unit, that is non-exhaustive. So feel free to type whatever unit you want to. But pressing tab will help you see some of them.
+
+** Derived units
+
 Similarly,
 
     g = 9.81 m/s^2
     g = 9.81 m/s^2 = 32.185039 ft/s^2
 
-There is completion for the target unit, that is non-exhaustive as it only includes defined units and not derived ones like ~ft/s^2~
+Completion only includes defined units and not derived ones like ~ft/s^2~, so you need to type it fully.
 
 Running ~units-convert-region~ will just show the converted results in the minibuffer.
 
 If there is errors, like units aren't matched then it'll end with the error from ~units~
+
+** Multiple units
+Since units can allow you to convert to multiple units, this package also can.
+
+For example using ~ft;in~ in ~1m~ here returns this:
+
+    L = 1m
+    L = 1m = 3 ft + 3.3700787 in
+    L = 1m = 3 ft + 3.3700787 in = 100 cm
+
+    As you can see in the third line, you can use that value again to convert to something else as ~units~ supports simple calculations on units.
+
+Also note that it'll remove the unit with 0 coefficient, for example converting ~1mile~ to ~ft;in~ will result in this:
+
+    L = 1mile
+    L = 1mile = 5280 ft
