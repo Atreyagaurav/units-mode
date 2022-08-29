@@ -38,13 +38,14 @@
 (require 'cl-lib)
 
 (defcustom units-binary-path "units"
-  "Path to the units binary.")
+  "Path to the units binary." :group 'units :type 'string)
 
 (defvar units-default-args "-t"
   "Default args to add to units command.")
 
 (defcustom units-user-args ""
-  "Extra args for user to add to units command.")
+  "Extra args for user to add to units command."
+  :group 'units :type 'string)
 
 (defun units-command (args)
   "Run the units command with ARGS and return the output."
