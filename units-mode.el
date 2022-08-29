@@ -29,7 +29,7 @@
 
 ;;; Commentary:
 
-;; This is emacs interface to gnu units program <https://www.gnu.org/software/units/units.html>.
+;; This is Emacs interface to gnu units program <https://www.gnu.org/software/units/units.html>.
 
 ;; For detailed help visit github page:
 ;; https://github.com/Atreyagaurav/units-mode
@@ -40,35 +40,29 @@
 (defcustom units-binary-path "units"
   "Path to the units binary.")
 
-(defcustom units-default-args "-t"
+(defvar units-default-args "-t"
   "Default args to add to units command.")
 
 (defcustom units-user-args ""
   "Extra args for user to add to units command.")
 
-(defun units-command (value to-unit)
-  "Run the units command to convert VALUE to TO-UNIT and return the output."
-  (shell-command-to-string
-   (format "%s %s %s \"%s\" \"%s\""
-	   units-binary-path
-	   units-default-args
-	   units-user-args
-	   value to-unit)))
+(defun units-command (args)
+  "Run the units command with ARGS and return the output."
+  (string-trim-right
+   (shell-command-to-string
+    (format "%s %s %s %s"
+	    units-binary-path
+	    units-default-args
+	    units-user-args
+	    args))))
 
-
-(defun units-command-conformable (value)
-  "Run the units command to get VALUE's conformable units."
-  (shell-command-to-string
-   (format "%s %s --conformable \"%s\""
-	   units-binary-path
-	   units-default-args
-	   value)))
 
 (defun units-convert (value to-unit)
   "Convert VALUE to TO-UNIT unit."
   (let ((out-lines (split-string
-		    (string-trim-right
-		     (units-command value to-unit)) "\n")))
+		     (units-command
+		      (format "\"%s\" \"%s\""
+			      value to-unit)) "\n")))
     (if (= (length out-lines) 1)
 	(car out-lines)
       (user-error "%s" (string-join out-lines "\n")))))
@@ -95,34 +89,44 @@
 (defun units-conformable-list (value)
   "Conformable units list related to VALUE."
   (split-string
-   (string-trim
-    (units-command-conformable value)) "\n"))
+    (units-command (format "--conformable \"%s\""
+			   value)) "\n"))
+
+
+(defun units-get-interactive-args ()
+  "Get Args for interactive input of REGION-TEXT and TO-UNITS."
+  (let ((region-text
+	  (buffer-substring-no-properties
+	   (region-beginning) (region-end))))
+      (list region-text
+	    (completing-read
+	     "Convert to: "
+	     (units-conformable-list region-text)))))
 
 (defun units-convert-region (region-text to-unit)
   "Convert the marked REGION-TEXT to TO-UNIT."
-  (interactive
-   (let ((region-text
-	  (buffer-substring-no-properties
-	   (region-beginning) (region-end))))
-      (list region-text
-	    (completing-read
-	     "Convert to: "
-	     (units-conformable-list region-text)))))
+  (interactive (units-get-interactive-args))
   (message "%s" (units-convert-formatted region-text to-unit)))
+
+(defun units-reduce-region (beg end)
+  "Reduce the region (BEG to END) to standard units."
+  (interactive "r")
+  (message "%s" (units-command
+		 (format "\"%s\""
+			 (buffer-substring-no-properties beg end)))))
+
+(defun units-reduce-region-and-insert (beg end)
+  "Reduce the region (BEG to END) to standard units and insert the results."
+  (interactive "r")
+  (goto-char end)
+  (insert (concat " = " (units-reduce-region beg end))))
 
 (defun units-convert-region-and-insert (region-text to-unit)
   "Convert REGION-TEXT to TO-UNIT and insert the results."
-  (interactive
-   (let ((region-text
-	  (buffer-substring-no-properties
-	   (region-beginning) (region-end))))
-      (list region-text
-	    (completing-read
-	     "Convert to: "
-	     (units-conformable-list region-text)))))
+  (interactive (units-get-interactive-args))
   (goto-char (region-end))
   (insert (concat " = "
-		  (units-convert-formatted region-text to-unit))))
+		  (units-convert-region region-text to-unit))))
 
 (define-minor-mode units-mode
   "Minor mode for Calculations related to units.")

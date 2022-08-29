@@ -1,8 +1,9 @@
+
 * units-mode
 
-This mode uses [[https://www.gnu.org/software/units/units.html][gnu units]] to facilitate unit conversions inside emacs.
+This mode uses [[https://www.gnu.org/software/units/units.html][gnu units]] to facilitate unit related conversions/calculations inside emacs.
 
-*This package is a work in progress*
+*This package is a work in progress* it doesn't handle all the errors or perform the checks yet.
 
 * Contents :TOC:
 - [[#units-mode][units-mode]]
@@ -12,10 +13,12 @@ This mode uses [[https://www.gnu.org/software/units/units.html][gnu units]] to f
   - [[#simple-conversion][Simple conversion]]
   - [[#derived-units][Derived units]]
   - [[#multiple-units][Multiple units]]
+  - [[#reduce-to-standard-units][Reduce to standard units]]
 
 * Features
-- [X] convert region to other units
-- [X] check ~--conformable~ units for completion
+- convert region to other units (e.g 1 mile ⇒ 5280 ft)
+- check ~--conformable~ units for completion
+- reduce expressions to standard unit form (e.g 1ft + 12 inch ⇒ 0.6096 m)
 
 * Installation
 First clone this repo into your local machine, then you can load it.
@@ -35,20 +38,34 @@ An example config using ~use-package~ is like this:
 ** Simple conversion
 If you have
 
+#+begin_src
     L = 23 ft
+#+end_src
 
 And you ran ~units-convert-region-and-insert~ while selecting ~23 ft~ you'll be asked for target unit and with ~mm~ you get:
 
+#+begin_src
     L = 23 ft = 7010.4 mm
+#+end_src
 
     There is completion for the target unit, that is non-exhaustive. So feel free to type whatever unit you want to. But pressing tab will help you see some of them.
 
 ** Derived units
 
-Similarly,
+Similar to previous, you can use derived units that are product of other units, or expression with numbers with units.
 
+#+begin_src
     g = 9.81 m/s^2
     g = 9.81 m/s^2 = 32.185039 ft/s^2
+#+end_src
+
+and,
+#+begin_src
+    g = 9.81 m/s^2 + 12 N / 4kg
+    g = 9.81 m/s^2 + 12 N / 4kg = 42.027559 ft/s^2
+#+end_src
+
+do note that the expression needs to be valid, if you try ~1m + 2 gram~ You'll get error.
 
 Completion only includes defined units and not derived ones like ~ft/s^2~, so you need to type it fully.
 
@@ -61,13 +78,29 @@ Since units can allow you to convert to multiple units, this package also can.
 
 For example using ~ft;in~ in ~1m~ here returns this:
 
+#+begin_src
     L = 1m
     L = 1m = 3 ft + 3.3700787 in
     L = 1m = 3 ft + 3.3700787 in = 100 cm
+#+end_src
 
     As you can see in the third line, you can use that value again to convert to something else as ~units~ supports simple calculations on units.
 
 Also note that it'll remove the unit with 0 coefficient, for example converting ~1mile~ to ~ft;in~ will result in this:
 
+#+begin_src
     L = 1mile
     L = 1mile = 5280 ft
+#+end_src
+
+** Reduce to standard units
+
+You can reduce a expression to standard units, for example running ~units-reduce-region-and-insert~ on region after ~=~ in these examples we get:
+#+begin_src
+    L = 1 miles
+    L = 1 miles = 1609.344 m
+    g' = 1.9 force
+    g' = 1.9 force = 18.632635 m / s^2
+    area = 5 acre
+    area = 5 acre = 20234.282 m^2
+#+end_src
