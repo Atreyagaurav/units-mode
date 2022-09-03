@@ -68,7 +68,7 @@
 		      (format "\"%s\" \"%s\""
 			      value to-unit)) "\n")))
     (if (and (= (length out-lines) 1)
-	     (string-match-p "^[0-9.e]+$"
+	     (string-match-p "^[0-9.e;]+$"
 			     (car out-lines)))
 	(car out-lines)
       (user-error "%s" (string-join out-lines "\n")))))
