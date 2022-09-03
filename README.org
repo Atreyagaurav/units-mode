@@ -1,12 +1,16 @@
 
-* units-mode
+* Introduction
 
 This mode uses [[https://www.gnu.org/software/units/units.html][gnu units]] to facilitate unit related conversions/calculations inside emacs.
 
-*This package is a work in progress* it doesn't handle all the errors or perform the checks yet.
+I wrote =units-mode= so that I can do quick conversion and see the values, as well as get possible units as completion to choose from so I know which units are similar. And =gnu units= being lot more powerful for units, you'll get the full power of =gnu units= inside emacs.
+
+Emacs supports unit conversion in [[https://www.gnu.org/software/emacs/manual/html_node/calc/Units.html][=calc= by default]], so if you use calc then you can do conversions there too however =units-mode= will make the conversion available anywhere, and easily callable functions to convert for your packages too.
+
+*This package is a work in progress* it may not handle all the errors or perform all the checks yet.
 
 * Contents :TOC:
-- [[#units-mode][units-mode]]
+- [[#introduction][Introduction]]
 - [[#features][Features]]
 - [[#installation][Installation]]
 - [[#examples][Examples]]
@@ -17,13 +21,15 @@ This mode uses [[https://www.gnu.org/software/units/units.html][gnu units]] to f
 
 * Features
 - convert region to other units (e.g 1 mile ⇒ 5280 ft)
-- check ~--conformable~ units for completion
+- check =--conformable= units for completion
+- Early error out for non-existent units
+- Errors out when target unit isn't the same dimension
 - reduce expressions to standard unit form (e.g 1ft + 12 inch ⇒ 0.6096 m)
 
 * Installation
 First clone this repo into your local machine, then you can load it.
 
-An example config using ~use-package~ is like this:
+An example config using =use-package= is like this:
 
 #+begin_src emacs-lisp
 (use-package units-mode
@@ -42,7 +48,7 @@ If you have
     L = 23 ft
 #+end_src
 
-And you ran ~units-convert-region-and-insert~ while selecting ~23 ft~ you'll be asked for target unit and with ~mm~ you get:
+And you ran =units-convert-region-and-insert= while selecting =23 ft= you'll be asked for target unit and with =mm= you get:
 
 #+begin_src
     L = 23 ft = 7010.4 mm
@@ -65,18 +71,18 @@ and,
     g = 9.81 m/s^2 + 12 N / 4kg = 42.027559 ft/s^2
 #+end_src
 
-do note that the expression needs to be valid, if you try ~1m + 2 gram~ You'll get error.
+do note that the expression needs to be valid, if you try =1m + 2 gram= You'll get error.
 
-Completion only includes defined units and not derived ones like ~ft/s^2~, so you need to type it fully.
+Completion only includes defined units and not derived ones like =ft/s^2=, so you need to type it fully.
 
-Running ~units-convert-region~ will just show the converted results in the minibuffer.
+Running =units-convert-region= will just show the converted results in the minibuffer.
 
-If there is errors, like units aren't matched then it'll end with the error from ~units~
+If there is errors, like units aren't matched then it'll end with the error from =units=
 
 ** Multiple units
 Since units can allow you to convert to multiple units, this package also can.
 
-For example using ~ft;in~ in ~1m~ here returns this:
+For example using =ft;in= in =1m= here returns this:
 
 #+begin_src
     L = 1m
@@ -84,9 +90,9 @@ For example using ~ft;in~ in ~1m~ here returns this:
     L = 1m = 3 ft + 3.3700787 in = 100 cm
 #+end_src
 
-    As you can see in the third line, you can use that value again to convert to something else as ~units~ supports simple calculations on units.
+    As you can see in the third line, you can use that value again to convert to something else as =units= supports simple calculations on units.
 
-Also note that it'll remove the unit with 0 coefficient, for example converting ~1mile~ to ~ft;in~ will result in this:
+Also note that it'll remove the unit with 0 coefficient, for example converting =1mile= to =ft;in= will result in this:
 
 #+begin_src
     L = 1mile
@@ -95,7 +101,7 @@ Also note that it'll remove the unit with 0 coefficient, for example converting 
 
 ** Reduce to standard units
 
-You can reduce a expression to standard units, for example running ~units-reduce-region-and-insert~ on region after ~=~ in these examples we get:
+You can reduce a expression to standard units, for example running =units-reduce-region-and-insert= on region after ~=~ in these examples we get:
 #+begin_src
     L = 1 miles
     L = 1 miles = 1609.344 m

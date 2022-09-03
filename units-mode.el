@@ -47,6 +47,9 @@
   "Extra args for user to add to units command."
   :group 'units :type 'string)
 
+(defvar units-insert-separator " = "
+  "Separator to insert before inserting the `units' outputs.")
+
 (defun units-command (args)
   "Run the units command with ARGS and return the output."
   (string-trim-right
@@ -64,7 +67,9 @@
 		     (units-command
 		      (format "\"%s\" \"%s\""
 			      value to-unit)) "\n")))
-    (if (= (length out-lines) 1)
+    (if (and (= (length out-lines) 1)
+	     (string-match-p "^[0-9.e]+$"
+			     (car out-lines)))
 	(car out-lines)
       (user-error "%s" (string-join out-lines "\n")))))
 
@@ -89,9 +94,12 @@
 
 (defun units-conformable-list (value)
   "Conformable units list related to VALUE."
-  (split-string
-    (units-command (format "--conformable \"%s\""
-			   value)) "\n"))
+  (let ((output (units-command (format "--conformable \"%s\""
+				       value))))
+    (if (not (string-match-p "Unknown unit" output))
+	      (split-string output
+	       "\n")
+      (user-error output))))
 
 
 (defun units-get-interactive-args ()
@@ -120,14 +128,23 @@
   "Reduce the region (BEG to END) to standard units and insert the results."
   (interactive "r")
   (goto-char end)
-  (insert (concat " = " (units-reduce-region beg end))))
+  (insert (concat units-insert-separator
+		  (units-reduce-region beg end))))
 
 (defun units-convert-region-and-insert (region-text to-unit)
   "Convert REGION-TEXT to TO-UNIT and insert the results."
   (interactive (units-get-interactive-args))
   (goto-char (region-end))
-  (insert (concat " = "
+  (insert (concat units-insert-separator
 		  (units-convert-region region-text to-unit))))
+
+(defun units-read (value &optional convert-to)
+  "Read the numeric value from VALUE optionally convert it to CONVERT-TO unit."
+  (if convert-to
+      (read (units-convert value convert-to))
+    (if (string-match "\\([0-9.]+\\)" value)
+	(read (match-string 1 value))
+      (error "No values to read"))))
 
 (define-minor-mode units-mode
   "Minor mode for Calculations related to units.")
