@@ -128,15 +128,15 @@
   "Reduce the region (BEG to END) to standard units and insert the results."
   (interactive "r")
   (goto-char end)
-  (insert (concat units-insert-separator
-		  (units-reduce-region beg end))))
+  (insert units-insert-separator
+	  (units-reduce-region beg end)))
 
 (defun units-convert-region-and-insert (region-text to-unit)
   "Convert REGION-TEXT to TO-UNIT and insert the results."
   (interactive (units-get-interactive-args))
   (goto-char (region-end))
-  (insert (concat units-insert-separator
-		  (units-convert-region region-text to-unit))))
+  (insert units-insert-separator
+	   (units-convert-region region-text to-unit)))
 
 (defun units-read (value &optional convert-to)
   "Read the numeric value from VALUE optionally convert it to CONVERT-TO unit."
