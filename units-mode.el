@@ -146,6 +146,11 @@
 	(read (match-string 1 value))
       (error "No values to read"))))
 
+(defmacro units-ignore (value unit)
+  "Read the numeric value from VALUE and ignore UNIT."
+  (ignore unit)
+  value)
+
 (define-minor-mode units-mode
   "Minor mode for Calculations related to units.")
 
