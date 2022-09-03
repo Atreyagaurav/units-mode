@@ -18,6 +18,9 @@ Emacs supports unit conversion in [[https://www.gnu.org/software/emacs/manual/ht
   - [[#derived-units][Derived units]]
   - [[#multiple-units][Multiple units]]
   - [[#reduce-to-standard-units][Reduce to standard units]]
+- [[#package-functions-to-use-in-your-code][Package Functions to use in your code]]
+  - [[#elisp][Elisp]]
+  - [[#slime-integration][Slime Integration]]
 
 * Features
 - convert region to other units (e.g 1 mile ⇒ 5280 ft)
@@ -110,3 +113,36 @@ You can reduce a expression to standard units, for example running =units-reduce
     area = 5 acre
     area = 5 acre = 20234.282 m^2
 #+end_src
+
+* Package Functions to use in your code
+
+** Elisp
+You can load and then directly use the functions in your code. Most useful ones are:
+#+begin_src emacs-lisp :exports both
+(list (units-convert-single (/ 1.0 2) "m" "ft")
+      (units-convert "2 m" "ft")
+      (units-reduce "1 m + 24 in")
+      (units-ignore 5 "ft"))
+#+end_src
+
+#+RESULTS:
+| 1.6404199 | 6.5616798 | 1.6096 m | 5 |
+
+
+** Slime Integration
+Although not part of emacs package there is a file =clisp/units.lisp= with functions that do similar things in sbcl. You can load/evaluate the functions there in slime process to use those same functions in slime.
+
+The slime integration means you'll have advantages of clisp rational numbers and other things while using the same syntax as that of elisp.
+
+Same example using sbcl. (Note that here you don't have to use 1.0/2 coz 1/2 ≠ 0 in sbcl)
+
+#+begin_src lisp :exports both :cache no
+(list (units-convert-single (/ 1 2) "m" "ft")
+      (units-convert "2 m" "ft")
+      (units-reduce "1 m + 24 in")
+      (units-ignore 5 "ft"))
+#+end_src
+
+#+RESULTS:
+| 1.6404198 | 6.56168 | 1.6096 | 5 |
+

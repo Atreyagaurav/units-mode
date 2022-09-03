@@ -117,12 +117,17 @@
   (interactive (units-get-interactive-args))
   (message "%s" (units-convert-formatted region-text to-unit)))
 
+(defun units-reduce (value)
+  "Reduce the VALUE to standard units."
+  (interactive "r")
+  (message "%s" (units-command
+		 (format "\"%s\"" value))))
+
 (defun units-reduce-region (beg end)
   "Reduce the region (BEG to END) to standard units."
   (interactive "r")
-  (message "%s" (units-command
-		 (format "\"%s\""
-			 (buffer-substring-no-properties beg end)))))
+  (message "%s" (units-reduce
+		 (buffer-substring-no-properties beg end))))
 
 (defun units-reduce-region-and-insert (beg end)
   "Reduce the region (BEG to END) to standard units and insert the results."

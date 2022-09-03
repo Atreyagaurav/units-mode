@@ -19,6 +19,5 @@
   (units-command (list val)))
 
 (defmacro units-ignore (val unit)
-  (ignore unit)
   val)
 
