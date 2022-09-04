@@ -22,7 +22,7 @@ Emacs supports unit conversion in [[https://www.gnu.org/software/emacs/manual/ht
   - [[#reduce-to-standard-units][Reduce to standard units]]
 - [[#package-functions-to-use-in-your-code][Package Functions to use in your code]]
   - [[#elisp][Elisp]]
-  - [[#slime-integration][Slime Integration]]
+  - [[#slime-integration-example-is-for-sbcl-adapt-to-whatever-clisp-you-use][Slime Integration (example is for sbcl; adapt to whatever clisp you use)]]
 
 * Features
 - convert region to other units (e.g 1 mile ⇒ 5280 ft)
@@ -32,13 +32,13 @@ Emacs supports unit conversion in [[https://www.gnu.org/software/emacs/manual/ht
 - reduce expressions to standard unit form (e.g 1ft + 12 inch ⇒ 0.6096 m)
 
 * Installation
-First clone this repo into your local machine, then you can load it.
+First clone this repo into your local machine or install it from melpa, then you can load it.
 
 An example config using =use-package= is like this:
 
 #+begin_src emacs-lisp
 (use-package units-mode
-  :load-path "/path/to/units-mode"
+  ;; :load-path "/path/to/units-mode"
   :hook text-mode
   :config
   (local-set-key (kbd "C-c u") 'units-convert-region-and-insert))
@@ -130,8 +130,10 @@ You can load and then directly use the functions in your code. Most useful ones 
 #+RESULTS:
 | 1.6404199 | 6.5616798 | 1.6096 m | 5 |
 
-** Slime Integration
+** Slime Integration (example is for sbcl; adapt to whatever clisp you use)
 Although not part of emacs package there is a file =clisp/units.lisp= with functions that do similar things in sbcl. You can load/evaluate the functions there in slime process to use those same functions in slime.
+
+You can also put the contents in =clisp/units.lisp= to =~/.sbclrc= so it's evaluated in sbcl startup, similarly for any other dialect you use.
 
 The slime integration means you'll have advantages of clisp rational numbers and other things while using the same syntax as that of elisp.
 
