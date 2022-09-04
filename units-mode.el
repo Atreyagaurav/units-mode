@@ -47,8 +47,9 @@
   "Extra args for user to add to units command."
   :group 'units :type 'string)
 
-(defvar units-insert-separator " = "
-  "Separator to insert before inserting the `units' outputs.")
+(defcustom units-insert-separator " = "
+  "Separator to insert before inserting the `units' outputs."
+  :group 'units :type 'string)
 
 (defun units-command (args)
   "Run the units command with ARGS and return the output."
@@ -124,7 +125,6 @@
 
 (defun units-reduce (value)
   "Reduce the VALUE to standard units."
-  (interactive "r")
   (message "%s" (units-command
 		 (format "\"%s\"" value))))
 

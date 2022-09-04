@@ -15,6 +15,10 @@ Emacs supports unit conversion in [[https://www.gnu.org/software/emacs/manual/ht
 - [[#introduction][Introduction]]
 - [[#features][Features]]
 - [[#installation][Installation]]
+- [[#customizations][Customizations]]
+  - [[#customize-variables][customize variables]]
+  - [[#keybindings][Keybindings]]
+- [[#interactive-functions][Interactive Functions]]
 - [[#examples][Examples]]
   - [[#simple-conversion][Simple conversion]]
   - [[#derived-units][Derived units]]
@@ -43,6 +47,43 @@ An example config using =use-package= is like this:
   :config
   (local-set-key (kbd "C-c u") 'units-convert-region-and-insert))
 #+end_src
+
+* Customizations
+
+** customize variables
+
+Available variables to customize are:
+- =units-binary-path= [default: "units"]
+  "Path to the units binary."
+
+  Change this if units isn't in your path, it should point to the units binary
+
+- =units-user-args= [default: ""]
+  "Extra args for user to add to units command."
+
+  If there is any args necessary for user. Default arg used by system is "-t" to get terse results so it depends on that to parse the results. Look at =man units= for possible args.
+
+- =units-insert-separator= [default: " = "]
+  "Separator to insert before inserting the `units' outputs."
+
+  When using the convert and insert variety of functions the converted value is separated with this separator before being inserted. for eg =1 m = 3.2808399 ft=.
+
+** Keybindings
+feel free to set your own keybindings, example is shown in [[Installation]]. The functions you can bind are in [[Interactive Functions]].
+
+* Interactive Functions
+
+- =units-convert-region=
+  Convert the marked region to a unit by asking units interactively. The interactive prompt has completions for defined units with same dimension but complex ones can be entered too.
+
+- =units-convert-region-and-insert=
+  Convert region to unit and insert the results. Same as =units-convert-region= but insert the results.
+
+- =units-reduce-region=
+  Reduce the region to standard units.
+
+- =units-reduce-region-and-insert=
+  Reduce the region to standard units and insert the results.
 
 
 * Examples
@@ -140,7 +181,7 @@ The slime integration means you'll have advantages of clisp rational numbers and
 Same example using sbcl. (Note that here you don't have to use 1.0/2 coz 1/2 ≠ 0 in sbcl)
 
 #+begin_src lisp :exports both :cache no
-(list (units-convert-single (/ 1 2) "m" "ft")
+(list (units-convert-simple (/ 1 2) "m" "ft")
       (units-convert "2 m" "ft")
       (units-reduce "1 m + 24 in")
       (units-ignore 5 "ft"))
