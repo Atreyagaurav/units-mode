@@ -14,6 +14,14 @@
 	      (units-convert-single 1 "day" "hour")) 24))
   (should-error (units-convert-single 10 "ft" "kg")))
 
+(ert-deftest units-convert-simple-test ()
+  (should (= (units-convert-simple 10 "ft" "m") 3.048))
+  (should (= (units-convert-simple 1 "m" "ft") 3.2808399))
+  (should (= (units-convert-simple 1 "kg" "g") 1e3))
+  (should (= (units-convert-simple 1 "hour" "seconds") (* 60 60)))
+  (should (= (units-convert-simple 1 "day" "hour") 24))
+  (should-error (units-convert-simple 10 "ft" "kg")))
+
 (ert-deftest units-convert-test ()
   (should (= (string-to-number
 	      (units-convert "10ft" "m")) 3.048))
