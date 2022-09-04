@@ -77,6 +77,11 @@
   "Convert a single VALUE from FROM-UNIT to TO-UNIT."
   (units-convert (format "%s %s" value from-unit) to-unit))
 
+(defun units-convert-simple (value from-unit to-unit)
+  "Convert a single VALUE from FROM-UNIT to TO-UNIT."
+  (read
+   (units-convert
+    (format "%s %s" value from-unit) to-unit)))
 
 (defun units-convert-formatted (value to-unit)
   "Convert VALUE to TO-UNIT and format the output."

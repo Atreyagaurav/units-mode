@@ -1,3 +1,5 @@
+    [[https://melpa.org/#/units-mode][file:https://melpa.org/packages/units-mode-badge.svg]]
+    [[https://stable.melpa.org/#/units-mode][file:https://stable.melpa.org/packages/units-mode-badge.svg]]
 
 * Introduction
 
@@ -119,7 +121,7 @@ You can reduce a expression to standard units, for example running =units-reduce
 ** Elisp
 You can load and then directly use the functions in your code. Most useful ones are:
 #+begin_src emacs-lisp :exports both
-(list (units-convert-single (/ 1.0 2) "m" "ft")
+(list (units-convert-simple (/ 1.0 2) "m" "ft")
       (units-convert "2 m" "ft")
       (units-reduce "1 m + 24 in")
       (units-ignore 5 "ft"))
@@ -127,7 +129,6 @@ You can load and then directly use the functions in your code. Most useful ones 
 
 #+RESULTS:
 | 1.6404199 | 6.5616798 | 1.6096 m | 5 |
-
 
 ** Slime Integration
 Although not part of emacs package there is a file =clisp/units.lisp= with functions that do similar things in sbcl. You can load/evaluate the functions there in slime process to use those same functions in slime.

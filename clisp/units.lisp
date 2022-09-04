@@ -7,13 +7,13 @@
 (defun units-convert (val unit)
   (units-command (list val unit)))
 
-(defun units-convert-single (val from unit)
+(defun units-convert-simple (val from unit)
   (units-command (list (format nil "~f ~A" val from) unit)))
 
 (defun units-convert (val unit)
   (units-command (list val unit)))
 
-(setq units-read 'units-convert)
+(setf (fdefinition 'units-read) #'units-convert)
 
 (defun units-reduce (val)
   (units-command (list val)))
