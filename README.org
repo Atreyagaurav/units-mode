@@ -3,7 +3,7 @@
 
 * Introduction
 
-This mode uses [[https://www.gnu.org/software/units/units.html][gnu units]] to facilitate unit related conversions/calculations inside emacs.
+This mode uses [[https://www.gnu.org/software/units/units.html][gnu units]] (which you need to install) to facilitate unit related conversions/calculations inside emacs.
 
 I wrote =units-mode= so that I can do quick conversion and see the values, as well as get possible units as completion to choose from so I know which units are similar. And =gnu units= being lot more powerful for units, you'll get the full power of =gnu units= inside emacs.
 
@@ -85,6 +85,8 @@ feel free to set your own keybindings, example is shown in [[Installation]]. The
 - =units-reduce-region-and-insert=
   Reduce the region to standard units and insert the results.
 
+- =units-quick-convert=
+  Quickly convert an expression into a unit interactively.
 
 * Examples
 ** Simple conversion

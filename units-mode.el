@@ -146,7 +146,16 @@
   (interactive (units-get-interactive-args))
   (goto-char (region-end))
   (insert units-insert-separator
-	   (units-convert-region region-text to-unit)))
+	  (units-convert-region region-text to-unit)))
+
+(defun units-quick-convert (expression unit)
+  "quicky convert EXPRESSION to UNIT."
+  (interactive (let ((expression (read-string "Expression: ")))
+		  (list expression
+			(completing-read
+			 "Convert to: "
+			 (units-conformable-list expression)))))
+  (message "%s" (units-convert expression unit)))
 
 (defun units-read (value &optional convert-to)
   "Read the numeric value from VALUE optionally convert it to CONVERT-TO unit."
@@ -156,7 +165,7 @@
 	(read (match-string 1 value))
       (error "No values to read"))))
 
-(defmacro units-ignore (value unit)
+(defun units-ignore (value unit)
   "Read the numeric value from VALUE and ignore UNIT."
   (ignore unit)
   value)
