@@ -148,14 +148,22 @@
   (insert units-insert-separator
 	  (units-convert-region region-text to-unit)))
 
-(defun units-quick-convert (expression unit)
-  "quicky convert EXPRESSION to UNIT."
+(defun units-quick-convert (ins expression unit)
+  "quicky convert EXPRESSION to UNIT. Insert if INS not nil."
   (interactive (let ((expression (read-string "Expression: ")))
-		  (list expression
-			(completing-read
-			 "Convert to: "
-			 (units-conformable-list expression)))))
-  (message "%s" (units-convert expression unit)))
+		 (list current-prefix-arg
+		       expression
+		       (completing-read
+			"Convert to: "
+			(units-conformable-list expression)))))
+  (let ((expr (message "%s %s" (units-convert expression unit) unit)))
+    (if ins (insert expr))))
+
+(defun units-quick-reduce (ins expression)
+  "Quickly reduce EXPRESSION to SI units, insert if INS not nil."
+  (interactive "P\nsExpression: ")
+  (let ((expr (units-reduce expression)))
+    (if ins (insert expr))))
 
 (defun units-read (value &optional convert-to)
   "Read the numeric value from VALUE optionally convert it to CONVERT-TO unit."
