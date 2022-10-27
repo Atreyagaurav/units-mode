@@ -344,9 +344,13 @@
 (defun units-molar-weight (compound)
   "Calculate the molar weight of COMPOUND given formula."
   (interactive "sMolecular Formula: ")
-  (string-to-number
-   (units-convert (units-compound-composition compound)
-     "")))
+  (let ((mw (units-convert
+	     (units-compound-composition compound)
+	     "")))
+    (if (called-interactively-p 'any)
+	(message mw)
+      (string-to-number mw))))
+
 
 (define-minor-mode units-mode
   "Minor mode for Calculations related to units.")

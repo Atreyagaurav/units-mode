@@ -34,6 +34,7 @@ Emacs supports unit conversion in [[https://www.gnu.org/software/emacs/manual/ht
 - Early error out for non-existent units
 - Errors out when target unit isn't the same dimension
 - reduce expressions to standard unit form (e.g 1ft + 12 inch ⇒ 0.6096 m)
+- Calculate molecular weight from chemical formula (e.g. CH3 ⇒ 15.03482)
 
 * Installation
 First clone this repo into your local machine or install it from melpa, then you can load it.
